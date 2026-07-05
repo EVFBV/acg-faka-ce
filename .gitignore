@@ -17,3 +17,7 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# 打包产物
+/shop.zip
+*.zip

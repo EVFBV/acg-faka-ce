@@ -34,14 +34,25 @@ class Pay extends Base implements PayInterface
             'device'       => 'pc',
         ];
 
+        // 易支付签名：按键名ASCII升序排序，过滤空值及sign/sign_type，
+        // 拼接为 k=v&k=v（原始值，不做URL编码），末尾拼接密钥后取MD5
         ksort($params);
-        $signStr             = http_build_query($params);
+        $signStr = '';
+        foreach ($params as $k => $v) {
+            if ($v === '' || $k === 'sign' || $k === 'sign_type') {
+                continue;
+            }
+            $signStr .= $k . '=' . $v . '&';
+        }
+        $signStr             = rtrim($signStr, '&');
         $params['sign']      = md5($signStr . $key);
         $params['sign_type'] = 'MD5';
 
+        // submit.php 需要 POST 表单提交，使用 TYPE_SUBMIT 由系统渲染表单自动提交
         $entity = new PayEntity();
-        $entity->setType(PayInterface::TYPE_REDIRECT);
-        $entity->setUrl($apiUrl . '/submit.php?' . http_build_query($params));
+        $entity->setType(PayInterface::TYPE_SUBMIT);
+        $entity->setUrl($apiUrl . '/submit.php');
+        $entity->setOption($params);
         return $entity;
     }
 }
