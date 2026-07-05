@@ -1,0 +1,19 @@
+# 依赖包（部署时运行 composer install）
+/vendor/
+
+# 运行时缓存
+/runtime/
+
+# 数据库配置（含密码，不入库）
+/config/database.php
+
+# 安装锁文件（安装后生成，不入库）
+/kernel/Install/Lock
+
+# 临时 SQL 文件
+/kernel/Install/*.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+*.log

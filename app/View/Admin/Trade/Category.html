@@ -1,0 +1,50 @@
+#{include file="../Header.html"}
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Toolbar-->
+    #{include file="../Toolbar.html"}
+    <!--end::Toolbar-->
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-fluid">
+            <!--begin::Tables Widget 9-->
+            <div class="card mb-5 mb-xl-8">
+                <!--begin::Header-->
+                <div class="card-header border-0">
+                    <div class="card-toolbar">
+                        <button class="btn btn-sm btn-light-primary btn-app-create me-3"><i
+                                    class="fa-duotone fa-regular fa-circle-plus"></i>
+                            添加分类
+                        </button>
+                        <button class="btn btn-sm btn-light-success start me-3"><i
+                                    class="fa-duotone fa-regular fa-circle-play"></i>
+                            启用选中分类
+                        </button>
+                        <button class="btn btn-sm btn-light-dark stop me-3"><i
+                                    class="fa-duotone fa-regular fa-circle-stop"></i>
+                            停用选中分类
+                        </button>
+                        <button class="btn btn-sm btn-light-danger btn-app-del me-3"><i
+                                    class="fa-duotone fa-regular fa-trash-can"></i> 移除选中分类
+                        </button>
+                        <!--start::HOOK-->
+                        #{hook(\App\Consts\Hook::ADMIN_VIEW_CATEGORY_TOOLBAR)}
+                        <!--end::HOOK-->
+                    </div>
+                </div>
+                <!--end::Header-->
+                <div class="card-body py-3">
+                    <table id="category-table"></table>
+                </div>
+            </div>
+
+            <!--end::Tables Widget 9-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Post-->
+</div>
+<!--end::Content-->
+#{ready("/assets/admin/controller/trade/category.js")}
+#{include file="../Footer.html"}

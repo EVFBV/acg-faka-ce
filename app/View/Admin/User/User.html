@@ -1,0 +1,134 @@
+#{include file="../Header.html"}
+<style>
+    .layui-popup .layui-layer-content {
+        position: relative !important;
+        overflow: auto !important;
+    }
+</style>
+<!--start::HOOK-->
+#{hook(\App\Consts\Hook::ADMIN_VIEW_USER_HEADER)}
+<!--end::HOOK-->
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Toolbar-->
+    #{include file="../Toolbar.html"}
+    <!--end::Toolbar-->
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-fluid">
+            <!--begin::Row-->
+            <div class="row g-5 g-xl-10">
+                <div class="col-xl-2">
+                    <!--begin::Statistics Widget 1-->
+                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
+                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
+                        <!--begin::Body-->
+                        <div class="card-body">
+                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">总用户</span>
+                            <div class="fw-bolder fs-1 text-primary my-6">#{$userCount}</div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Statistics Widget 1-->
+                </div>
+                <div class="col-xl-2">
+                    <!--begin::Statistics Widget 1-->
+                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
+                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
+                        <!--begin::Body-->
+                        <div class="card-body">
+                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">商家</span>
+                            <div class="fw-bolder fs-1 text-success my-6">#{$businessCount}</div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Statistics Widget 1-->
+                </div>
+                <div class="col-xl-2">
+                    <!--begin::Statistics Widget 1-->
+                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
+                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
+                        <!--begin::Body-->
+                        <div class="card-body">
+                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">当前余额</span>
+                            <div class="fw-bolder fs-1 text-primary my-6">￥#{$balance}</div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Statistics Widget 1-->
+                </div>
+                <div class="col-xl-2">
+                    <!--begin::Statistics Widget 1-->
+                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
+                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
+                        <!--begin::Body-->
+                        <div class="card-body">
+                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">总充值</span>
+                            <div class="fw-bolder fs-1 text-success my-6">#{$recharge}</div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Statistics Widget 1-->
+                </div>
+                <div class="col-xl-2">
+                    <!--begin::Statistics Widget 1-->
+                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
+                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
+                        <!--begin::Body-->
+                        <div class="card-body">
+                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">当前硬币</span>
+                            <div class="fw-bolder fs-1 text-primary my-6">￥#{$coin}</div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Statistics Widget 1-->
+                </div>
+                <div class="col-xl-2">
+                    <!--begin::Statistics Widget 1-->
+                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
+                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
+                        <!--begin::Body-->
+                        <div class="card-body">
+                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">总获得硬币</span>
+                            <div class="fw-bolder fs-1 text-success my-6">#{$totalCoin}</div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Statistics Widget 1-->
+                </div>
+            </div>
+            <!--end::Row-->
+
+            <!--begin::Tables Widget 9-->
+            <div class="card mb-5 mb-xl-8">
+                <!--begin::Header-->
+                <div class="card-header">
+                    <div class="card-toolbar">
+                        <button class="btn btn-sm btn-light-primary handle me-3"><i class="fa-duotone fa-regular fa-user-pen"></i>修改会员等级
+                        </button>
+                        <button class="btn btn-sm btn-light-danger btn-app-del me-3"><i class="fa-duotone fa-regular fa-trash-can"></i> 移除选中用户 </button>
+                        <!--start::HOOK-->
+                        #{hook(\App\Consts\Hook::ADMIN_VIEW_USER_TOOLBAR)}
+                        <!--end::HOOK-->
+                    </div>
+                </div>
+                <!--end::Header-->
+                <div class="card-body py-3">
+                    <table id="user-table"></table>
+                </div>
+            </div>
+
+            <!--end::Tables Widget 9-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Post-->
+</div>
+<!--end::Content-->
+
+#{ready("/assets/admin/controller/user/index.js")}
+<!--start::HOOK-->
+#{hook(\App\Consts\Hook::ADMIN_VIEW_USER_FOOTER)}
+<!--end::HOOK-->
+#{include file="../Footer.html"}

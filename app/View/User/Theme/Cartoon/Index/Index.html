@@ -1,0 +1,35 @@
+#{include file="./Header.html"}
+<main class="container py-4">
+  <!-- 公告面板 -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="icon"><i class="fa-duotone fa-regular fa-bullhorn"></i></span>
+      <h6 class="panel-title">公告</h6>
+    </div>
+    <div class="panel-body">
+        #{$config.notice}
+    </div>
+  </div>
+
+  <!-- 购买面板 -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="icon"><i class="fa-duotone fa-regular fa-cart-shopping"></i></span>
+      <h6 class="panel-title">购买</h6>
+    </div>
+    <div class="panel-body">
+      <div class="mb-3">
+        <div class="chip-list">
+            #{foreach $category as $cate}
+                <a data-id="#{$cate.id}" class="switch-category chip #{if $cate@first && $categoryId == 0} is-primary #{elseif $cate.id == $categoryId} is-primary #{/if}" href="javascript:void(0);">#{if $cate.id != 'recommend'}<span class="chip-icon" style="background: url('#{$cate.icon}') center/cover no-repeat;"></span>#{/if}#{$cate.name}</a>
+            #{/foreach}
+        </div>
+      </div>
+      <div class="row item-list">
+          <div class="item-message">努力加载中..</div>
+      </div>
+    </div>
+  </div>
+</main>
+#{ready("/assets/user/controller/index/index.js")}
+#{include file="./Footer.html"}

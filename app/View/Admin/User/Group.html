@@ -1,0 +1,59 @@
+#{include file="../Header.html"}
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Toolbar-->
+    #{include file="../Toolbar.html"}
+    <!--end::Toolbar-->
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-fluid">
+            <!--begin::Tables Widget 9-->
+            <div class="row">
+                <div class="card mb-5 mb-xl-8 col-md-6 p-0">
+                    <!--begin::Header-->
+                    <div class="card-header border-0">
+                        <h3 class="card-title text-primary"><i class="fa-duotone fa-regular fa-users-gear me-2"></i> 会员等级</h3>
+                        <div class="card-toolbar">
+                            <button class="btn btn-sm btn-light-primary btn-group-create me-3"><i
+                                        class="fa-duotone fa-regular fa-circle-plus"></i>新增等级
+                            </button>
+                        </div>
+                    </div>
+                    <!--end::Header-->
+                    <div class="card-body py-3">
+                        <table id="user-group"></table>
+                    </div>
+                </div>
+                <!--end::Tables Widget 9-->
+
+                <!--begin::Tables Widget 9-->
+                <div class="card mb-5 mb-xl-8 col-md-5 p-0 ms-md-2">
+                    <!--begin::Header-->
+                    <div class="card-header border-0">
+                        <h3 class="card-title text-info"><i class="fa-duotone fa-regular fa-group-arrows-rotate me-2"></i> 商品分组</h3>
+                        <div class="card-toolbar">
+                            <button class="btn btn-sm btn-light-primary btn-commodity-group-create me-3"><i
+                                        class="fa-duotone fa-regular fa-circle-plus"></i>
+                                添加分组
+                            </button>
+                        </div>
+                    </div>
+                    <!--end::Header-->
+
+                    <div class="card-body py-3">
+                        <form class="search-query"></form>
+                        <table id="commodity-group" ></table>
+                    </div>
+                </div>
+            </div>
+            <!--end::Tables Widget 9-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Post-->
+</div>
+<!--end::Content-->
+
+#{ready("/assets/admin/controller/user/group.js")}
+#{include file="../Footer.html"}
