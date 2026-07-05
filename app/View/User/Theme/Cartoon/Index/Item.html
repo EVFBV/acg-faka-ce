@@ -108,7 +108,7 @@
                             </div>
 
                             #{if $item.trade_captcha == 1}
-                                <div>
+                                <div class="behavior-hide-when-active">
                                     <label class="form-label mb-1">人机验证</label>
                                     <div class="input-group" style="width: 240px;">
                                         <input type="text" class="form-control captcha-input" placeholder="图形验证码"
@@ -119,6 +119,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="behavior-captcha mb-2"></div>
                             #{/if}
 
                             <div class="cash-pay p-2" style="display: none;">
@@ -149,5 +150,7 @@
 
 
 </main>
+<script>setVar("_captcha_provider", #{$config.captcha_provider});</script>
+#{js("/assets/user/controller/common/captcha.js")}
 #{ready("/assets/user/controller/index/item.js")}
 #{include file="./Footer.html"}

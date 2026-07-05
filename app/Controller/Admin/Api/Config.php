@@ -142,6 +142,50 @@ class Config extends Manage
     }
 
     /**
+     * 安全设置(行为验证)保存
+     * 存储结构: behavior_captcha_config = {
+     *   "type": "image|geetest|turnstile|aliyun",
+     *   "geetest":   {"captcha_id":"","captcha_key":""},
+     *   "turnstile": {"site_key":"","secret":""},
+     *   "aliyun":    {"access_key_id":"","access_key_secret":"","scene_id":"","prefix":"","region":""}
+     * }
+     * @throws JSONException
+     */
+    public function security(): array
+    {
+        $post = $this->request->post(flags: Filter::NORMAL);
+        $type = trim((string)($post['captcha_type'] ?? "image"));
+
+        $config = [
+            "type" => $type,
+            "geetest" => [
+                "captcha_id" => trim((string)($post['geetest_captcha_id'] ?? "")),
+                "captcha_key" => trim((string)($post['geetest_captcha_key'] ?? "")),
+            ],
+            "turnstile" => [
+                "site_key" => trim((string)($post['turnstile_site_key'] ?? "")),
+                "secret" => trim((string)($post['turnstile_secret'] ?? "")),
+            ],
+            "aliyun" => [
+                "access_key_id" => trim((string)($post['aliyun_access_key_id'] ?? "")),
+                "access_key_secret" => trim((string)($post['aliyun_access_key_secret'] ?? "")),
+                "scene_id" => trim((string)($post['aliyun_scene_id'] ?? "")),
+                "prefix" => trim((string)($post['aliyun_prefix'] ?? "")),
+                "region" => trim((string)($post['aliyun_region'] ?? "cn-hangzhou")),
+            ],
+        ];
+
+        try {
+            CFG::put("behavior_captcha_config", json_encode($config, JSON_UNESCAPED_UNICODE));
+        } catch (\Exception $e) {
+            throw new JSONException("保存失败，请检查原因");
+        }
+
+        ManageLog::log($this->getManage(), "修改了安全设置(行为验证)");
+        return $this->json(200, '保存成功');
+    }
+
+    /**
      * @throws JSONException
      */
     public function sms(): array

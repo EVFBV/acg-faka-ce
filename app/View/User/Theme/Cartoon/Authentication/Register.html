@@ -74,7 +74,7 @@
 
 
             #{if $config.registered_verification == 1}
-                <div class="row mb-4">
+                <div class="row mb-4 behavior-hide-when-active">
                     <div class="col-sm-6 col-6">
                         <div class="form-floating">
                             <input type="text" class="form-control" id="image-captcha" name="captcha"
@@ -88,6 +88,7 @@
                              class="image-code" alt="更换验证码">
                     </div>
                 </div>
+                <div class="behavior-captcha mb-4"></div>
             #{/if}
 
             <div class="d-grid">
@@ -115,5 +116,7 @@
     </div>
 </main>
 <!-- END Main Container -->
+<script>setVar("_captcha_provider", #{$config.captcha_provider});</script>
+#{js("/assets/user/controller/common/captcha.js")}
 #{ready("/assets/user/controller/auth/register.js")}
 #{include file="./Footer.html"}

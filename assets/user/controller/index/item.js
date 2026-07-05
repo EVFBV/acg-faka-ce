@@ -213,20 +213,37 @@
         });
 
         $(document).on("click", `.pay-list .pay`, function () {
-            let post = _getPostData();
-            post["pay_id"] = $(this).data("id");
-            util.post("/user/api/order/trade", post, res => {
-                if (post["pay_id"] == 1) {
-                    //余额购买，直接反馈
-                    treasure.show(res.data.tradeNo, res.data.secret);
-                    return;
-                }
+            const payId = $(this).data("id");
 
-                window.location.href = res.data.url;
-            }, error => {
-                message.error(error.msg);
-                _CaptchaRefresh();
-            });
+            const doTrade = (tokens) => {
+                let post = _getPostData();
+                post["pay_id"] = payId;
+                if (tokens) {
+                    post = Object.assign(post, tokens);
+                }
+                util.post("/user/api/order/trade", post, res => {
+                    if (payId == 1) {
+                        //余额购买，直接反馈
+                        treasure.show(res.data.tradeNo, res.data.secret);
+                        return;
+                    }
+
+                    window.location.href = res.data.url;
+                }, error => {
+                    message.error(error.msg);
+                    _CaptchaRefresh();
+                });
+            };
+
+            if (window.BehaviorCaptcha && BehaviorCaptcha.isBehavior()) {
+                BehaviorCaptcha.ensure().then(tokens => {
+                    doTrade(tokens);
+                }).catch(err => {
+                    message.error(typeof err === "string" ? err : "请完成人机验证");
+                });
+                return;
+            }
+            doTrade();
         });
     }
 
@@ -332,4 +349,12 @@
     _OptionalCard();
 
     _ShareItem();
+
+    //挂载行为验证组件(未启用时自动跳过)
+    if (window.BehaviorCaptcha) {
+        BehaviorCaptcha.mount({
+            container: '.behavior-captcha',
+            form: '.vstack'
+        });
+    }
 }();

@@ -54,7 +54,7 @@ class Authentication extends User
             throw new JSONException("注册已关闭");
         }
 
-        if ($registeredVerification == 1 && (!isset($_POST['captcha']) || !Captcha::check((int)$_POST['captcha'], "register"))) {
+        if ($registeredVerification == 1 && !\App\Service\Captcha\Verifier::check($_POST, "register")) {
             throw new JSONException("验证码错误");
         }
 
@@ -161,7 +161,7 @@ class Authentication extends User
             throw new JSONException("该功能暂不可用");
         }
 
-        if (!isset($_POST['captcha']) || !Captcha::check((int)$_POST['captcha'], "emailRegisterCaptcha")) {
+        if (!\App\Service\Captcha\Verifier::check($_POST, "emailRegisterCaptcha")) {
             throw new JSONException("验证码错误");
         }
 
@@ -186,7 +186,7 @@ class Authentication extends User
             throw new JSONException("该功能暂不可用");
         }
 
-        if (!isset($_POST['captcha']) || !Captcha::check((int)$_POST['captcha'], "emailForgetCaptcha")) {
+        if (!\App\Service\Captcha\Verifier::check($_POST, "emailForgetCaptcha")) {
             throw new JSONException("验证码错误");
         }
 
@@ -224,7 +224,7 @@ class Authentication extends User
             throw new JSONException("该功能暂不可用");
         }
 
-        if (!isset($_POST['captcha']) || !Captcha::check((int)$_POST['captcha'], "phoneRegisterCaptcha")) {
+        if (!\App\Service\Captcha\Verifier::check($_POST, "phoneRegisterCaptcha")) {
             throw new JSONException("验证码错误");
         }
 
@@ -250,7 +250,7 @@ class Authentication extends User
             throw new JSONException("该功能暂不可用");
         }
 
-        if (!isset($_POST['captcha']) || !Captcha::check((int)$_POST['captcha'], "phoneForgetCaptcha")) {
+        if (!\App\Service\Captcha\Verifier::check($_POST, "phoneForgetCaptcha")) {
             throw new JSONException("验证码错误");
         }
 
@@ -277,7 +277,7 @@ class Authentication extends User
 
         $loginVerification = (int)Config::get("login_verification");
 
-        if ($loginVerification == 1 && (!isset($_POST['captcha']) || !Captcha::check((int)$_POST['captcha'], "login"))) {
+        if ($loginVerification == 1 && !\App\Service\Captcha\Verifier::check($_POST, "login")) {
             throw new JSONException("验证码错误");
         }
 

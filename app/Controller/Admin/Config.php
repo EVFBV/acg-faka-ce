@@ -20,6 +20,7 @@ class Config extends Manage
         ["name" => '🤡 基本设置', "url" => "/admin/config/index"],
         ["name" => "👹 短信设置", "url" => "/admin/config/sms"],
         ["name" => "👺 邮箱设置", "url" => "/admin/config/email"],
+        ["name" => "🔒 安全设置", "url" => "/admin/config/security"],
         ["name" => "🛡️ 其他设置", "url" => "/admin/config/other"],
     ];
 
@@ -113,5 +114,17 @@ class Config extends Manage
     {
         $category = \App\Model\Category::query()->where("status", 1)->where("owner", 0)->get();
         return $this->render("其他设置", "Config/Other.html", ["toolbar" => $this->TOOLBAR, "category" => $category->toArray()]);
+    }
+
+    /**
+     * 安全设置(行为验证)
+     * @return string
+     * @throws ViewException
+     * @throws RuntimeException
+     */
+    public function security(): string
+    {
+        $captcha = json_decode(\App\Model\Config::get("behavior_captcha_config"), true) ?: [];
+        return $this->render("安全设置", "Config/Security.html", ["toolbar" => $this->TOOLBAR, "captcha" => $captcha]);
     }
 }

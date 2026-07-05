@@ -37,10 +37,10 @@ class Order extends User
     {
         $map = $request->post(flags: Filter::NORMAL);
         if (Config::get("trade_verification") == 1) {
-            if (!Captcha::check((int)$map['captcha'], "trade")) {
+            if (!\App\Service\Captcha\Verifier::check($map, "trade")) {
                 throw new JSONException("验证码错误");
             }
-            Captcha::destroy("trade");
+            \App\Service\Captcha\Verifier::destroy("trade");
         }
 
         $map['device'] = Client::getDeviceTypeByUa($request->header("User-Agent"));

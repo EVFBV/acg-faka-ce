@@ -1,0 +1,172 @@
+#{include file="../Header.html"}
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Toolbar-->
+    #{include file="../Toolbar.html"}
+    <!--end::Toolbar-->
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-xxl">
+            <!--begin::Basic info-->
+            <div class="card mb-5 mb-xl-10">
+                <!--begin::Card header-->
+                <div class="card-header border-0 cursor-pointer">
+                    <!--begin::Card title-->
+                    <div class="card-title m-0">
+                        <h3 class="fw-bolder m-0">安全设置 - 人机行为验证</h3>
+                    </div>
+                    <!--end::Card title-->
+                </div>
+                <!--begin::Card header-->
+                <!--begin::Content-->
+                <div id="kt_account_profile_details" class="collapse show">
+                    <!--begin::Form-->
+                    <form id="data-form" class="form">
+                        <!--begin::Card body-->
+                        <div class="card-body p-9">
+
+                            <!--begin::Hint-->
+                            <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed mb-9 p-6">
+                                <div class="d-flex flex-stack flex-grow-1">
+                                    <div class="fw-bold">
+                                        <div class="fs-6 text-gray-700">
+                                            选择一种人机行为验证服务后，前台的
+                                            <b>登录、注册、找回密码、下单</b>
+                                            等场景将使用该服务替代默认的数字图形验证码（是否启用仍受
+                                            <a href="/admin/config/index">基本设置</a>
+                                            中各验证码开关控制）。选择「默认数字验证码」则保持系统原有验证方式。
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Hint-->
+
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <!--begin::Label-->
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">验证类型</label>
+                                <!--end::Label-->
+                                <!--begin::Col-->
+                                <div class="col-lg-8 fv-row">
+                                    <!--begin::Input-->
+                                    <select name="captcha_type" class="form-select form-select-solid form-select-lg"
+                                            data-control="select2" data-hide-search="true">
+                                        <option value="image" #{if $captcha.type == 'image' || !$captcha.type} selected #{/if}>默认数字验证码</option>
+                                        <option value="geetest" #{if $captcha.type == 'geetest'} selected #{/if}>极验行为验证 (Geetest v4)</option>
+                                        <option value="turnstile" #{if $captcha.type == 'turnstile'} selected #{/if}>Cloudflare Turnstile</option>
+                                        <option value="aliyun" #{if $captcha.type == 'aliyun'} selected #{/if}>阿里云验证码 2.0</option>
+                                    </select>
+                                    <!--end::Input-->
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Input group-->
+
+
+                            <!--begin::Geetest-->
+                            <div class="row mb-6 provider provider-geetest" style="#{if $captcha.type != 'geetest'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">验证ID (captcha_id)</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="geetest_captcha_id"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="请输入极验 captcha_id" value="#{$captcha.geetest.captcha_id}"/>
+                                </div>
+                            </div>
+                            <div class="row mb-6 provider provider-geetest" style="#{if $captcha.type != 'geetest'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">验证KEY (captcha_key)</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="geetest_captcha_key"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="请输入极验 captcha_key" value="#{$captcha.geetest.captcha_key}"/>
+                                </div>
+                            </div>
+                            <!--end::Geetest-->
+
+
+                            <!--begin::Turnstile-->
+                            <div class="row mb-6 provider provider-turnstile" style="#{if $captcha.type != 'turnstile'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">Site Key</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="turnstile_site_key"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="请输入 Turnstile Site Key" value="#{$captcha.turnstile.site_key}"/>
+                                </div>
+                            </div>
+                            <div class="row mb-6 provider provider-turnstile" style="#{if $captcha.type != 'turnstile'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">Secret Key</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="turnstile_secret"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="请输入 Turnstile Secret Key" value="#{$captcha.turnstile.secret}"/>
+                                </div>
+                            </div>
+                            <!--end::Turnstile-->
+
+
+                            <!--begin::Aliyun-->
+                            <div class="row mb-6 provider provider-aliyun" style="#{if $captcha.type != 'aliyun'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">AccessKeyId</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="aliyun_access_key_id"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="请输入 AccessKeyId" value="#{$captcha.aliyun.access_key_id}"/>
+                                </div>
+                            </div>
+                            <div class="row mb-6 provider provider-aliyun" style="#{if $captcha.type != 'aliyun'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">AccessKeySecret</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="aliyun_access_key_secret"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="请输入 AccessKeySecret" value="#{$captcha.aliyun.access_key_secret}"/>
+                                </div>
+                            </div>
+                            <div class="row mb-6 provider provider-aliyun" style="#{if $captcha.type != 'aliyun'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">场景ID (SceneId)</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="aliyun_scene_id"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="请输入验证码场景ID" value="#{$captcha.aliyun.scene_id}"/>
+                                </div>
+                            </div>
+                            <div class="row mb-6 provider provider-aliyun" style="#{if $captcha.type != 'aliyun'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">身份标 (Prefix)</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="aliyun_prefix"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="控制台获取的身份标 prefix" value="#{$captcha.aliyun.prefix}"/>
+                                </div>
+                            </div>
+                            <div class="row mb-6 provider provider-aliyun" style="#{if $captcha.type != 'aliyun'} display: none; #{/if}">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">地域 (Region)</label>
+                                <div class="col-lg-8 fv-row">
+                                    <input type="text" name="aliyun_region"
+                                           class="form-control form-control-lg form-control-solid"
+                                           placeholder="默认 cn-hangzhou" value="#{if $captcha.aliyun.region}#{$captcha.aliyun.region}#{else}cn-hangzhou#{/if}"/>
+                                </div>
+                            </div>
+                            <!--end::Aliyun-->
+
+                        </div>
+                        <!--end::Card body-->
+                        <!--begin::Actions-->
+                        <div class="card-footer d-flex justify-content-center py-6 px-9">
+                            <button type="button" class="btn btn-primary save-data m-1">保存设置 (Save Config)</button>
+                        </div>
+                        <!--end::Actions-->
+                    </form>
+                    <!--end::Form-->
+                </div>
+                <!--end::Content-->
+            </div>
+            <!--end::Basic info-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Post-->
+</div>
+<!--end::Content-->
+
+#{ready("/assets/admin/controller/config/security.js")}
+#{include file="../Footer.html"}

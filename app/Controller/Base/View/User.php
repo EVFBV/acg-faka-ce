@@ -46,6 +46,7 @@ abstract class User extends \App\Controller\Base\User
             foreach ($cfg as $k => $v) {
                 $data["config"][$k] = $v;
             }
+            $this->injectBehaviorCaptcha($data);
             return View::render('User/' . $template, $data);
         } catch (\SmartyException $e) {
             throw new ViewException($e->getMessage());
@@ -134,6 +135,8 @@ abstract class User extends \App\Controller\Base\User
                 $data['group'] = $this->getUserGroup()?->toArray();
             }
 
+            $this->injectBehaviorCaptcha($data);
+
             if ($system) {
                 $data['setting'] = Theme::getConfig("Cartoon")["setting"];
             } else {
@@ -155,6 +158,24 @@ abstract class User extends \App\Controller\Base\User
         }
 
         return "";
+    }
+
+    /**
+     * 注入行为验证前端公开配置(供模板/JS使用)
+     * captcha_provider = {"type":"image|geetest|turnstile|aliyun", ...公钥}
+     * @param array $data
+     * @return void
+     */
+    protected function injectBehaviorCaptcha(array &$data): void
+    {
+        try {
+            $data['config']['captcha_provider'] = json_encode(
+                \App\Service\Captcha\Factory::frontendConfig(),
+                JSON_UNESCAPED_UNICODE
+            );
+        } catch (\Throwable $e) {
+            $data['config']['captcha_provider'] = json_encode(["type" => "image"]);
+        }
     }
 
 
