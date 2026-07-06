@@ -169,12 +169,17 @@ abstract class User extends \App\Controller\Base\User
     protected function injectBehaviorCaptcha(array &$data): void
     {
         try {
-            $cfg = \App\Service\Captcha\Factory::frontendConfig();
-            $data['config']['captcha_provider']   = json_encode($cfg, JSON_UNESCAPED_UNICODE);
-            $data['config']['disable_devtools']   = (int)($cfg['disable_devtools'] ?? 0);
+            // 读取完整配置（含 disable_devtools 等根节点字段）
+            $rootCfg = \App\Service\Captcha\Factory::config();
+            // 只向前端暴露 SDK 公钥，不含私钥
+            $data['config']['captcha_provider'] = json_encode(
+                \App\Service\Captcha\Factory::frontendConfig(),
+                JSON_UNESCAPED_UNICODE
+            );
+            $data['config']['disable_devtools'] = (int)($rootCfg['disable_devtools'] ?? 0);
         } catch (\Throwable $e) {
-            $data['config']['captcha_provider']   = json_encode(["type" => "image"]);
-            $data['config']['disable_devtools']   = 0;
+            $data['config']['captcha_provider'] = json_encode(["type" => "image"]);
+            $data['config']['disable_devtools'] = 0;
         }
     }
 

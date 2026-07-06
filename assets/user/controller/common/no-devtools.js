@@ -1,12 +1,12 @@
 /**
  * 禁用前台开发者工具(F12调试器)
- * 三重策略：快捷键拦截 + debugger无限循环 + 窗口尺寸差异检测
- * 仅对前台用户生效，后台管理页不加载此文件。
+ * 策略1: 拦截快捷键(F12/Ctrl+Shift+I/J/C/右键)
+ * 策略2: devtools 打开时 console.log 对象会触发 getter，利用此特性检测并跳转
  */
 !function () {
     "use strict";
 
-    // 1. 拦截常见快捷键
+    // ── 策略1: 拦截快捷键及右键菜单 ──────────────────────────────────────
     document.addEventListener("keydown", function (e) {
         // F12
         if (e.key === "F12" || e.keyCode === 123) {
@@ -15,61 +15,57 @@
             return false;
         }
         // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
-        if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" ||
-            e.key === "J" || e.key === "j" ||
-            e.key === "C" || e.key === "c")) {
+        if (e.ctrlKey && e.shiftKey && /^[ijcIJC]$/.test(e.key)) {
             e.preventDefault();
             e.stopImmediatePropagation();
             return false;
         }
-        // Ctrl+U (查看源代码)
-        if (e.ctrlKey && (e.key === "U" || e.key === "u")) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
-        }
-        // Ctrl+P (打印，可能暴露布局)
-        if (e.ctrlKey && (e.key === "P" || e.key === "p")) {
+        // Ctrl+U (查看源代码)  Ctrl+P (打印)
+        if (e.ctrlKey && /^[upUP]$/.test(e.key)) {
             e.preventDefault();
             e.stopImmediatePropagation();
             return false;
         }
     }, true);
 
-    // 2. 禁用右键菜单（防止"检查元素"）
     document.addEventListener("contextmenu", function (e) {
         e.preventDefault();
         return false;
     }, true);
 
-    // 3. debugger 无限循环 — 调试器附加时会卡住脚本执行，给用户强烈的不便感
-    //    在 Worker 中运行避免阻塞主线程 UI
-    var _dbgWorkerSrc = 'setInterval(function(){debugger;},50);';
-    try {
-        var blob = new Blob([_dbgWorkerSrc], {type: "application/javascript"});
-        var url = URL.createObjectURL(blob);
-        new Worker(url);
-    } catch (e) {
-        // 降级：直接在页面内轮询（部分浏览器限制 Worker blob）
-        setInterval(function () { debugger; }, 200);
-    }
+    // ── 策略2: 利用 console 对象 getter 检测 devtools 是否已打开 ──────────
+    // 原理: devtools 打开后，浏览器会在后台调用被 console.log 的对象的 getter，
+    //        通过 Object.defineProperty 设置 getter 并在其中标记即可检测。
+    var _devtoolsOpen = false;
+    var _redirected   = false;
 
-    // 4. 窗口尺寸差异检测 — 横向/纵向打开 devtools 时 window.outerWidth/Height 会变大
-    var _threshold = 160;
-    var _warned = false;
-    var _checkDevtools = function () {
-        var widthDiff  = window.outerWidth  - window.innerWidth;
-        var heightDiff = window.outerHeight - window.innerHeight;
-        if (widthDiff > _threshold || heightDiff > _threshold) {
-            if (!_warned) {
-                _warned = true;
-                // 重定向到空白页，关闭 devtools 后刷新即可恢复
-                document.body.innerHTML = "";
-                window.location.replace("about:blank");
-            }
-        } else {
-            _warned = false;
+    var _img = new Image();
+    Object.defineProperty(_img, "id", {
+        get: function () {
+            _devtoolsOpen = true;
+        }
+    });
+
+    var _check = function () {
+        _devtoolsOpen = false;
+        console.log(_img);      // 触发 getter
+        console.clear();        // 清空 console，避免积累
+
+        if (_devtoolsOpen && !_redirected) {
+            _redirected = true;
+            document.body.innerHTML =
+                '<div style="display:flex;align-items:center;justify-content:center;height:100vh;' +
+                'font-family:sans-serif;background:#f5f6fa;">' +
+                '<div style="text-align:center;padding:40px;background:#fff;border-radius:12px;' +
+                'box-shadow:0 4px 24px rgba(0,0,0,.1);">' +
+                '<h2 style="color:#e74c3c;">⚠️ 访问受限</h2>' +
+                '<p style="color:#666;">请关闭开发者工具后刷新页面。</p>' +
+                '<button onclick="location.reload()" style="margin-top:16px;padding:8px 24px;' +
+                'background:#e74c3c;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;">' +
+                '刷新页面</button></div></div>';
         }
     };
-    setInterval(_checkDevtools, 1000);
+
+    // 每隔 1 秒检测一次
+    setInterval(_check, 1000);
 }();

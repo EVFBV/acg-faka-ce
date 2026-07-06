@@ -2,28 +2,38 @@
     // 获取仪表板数据
     function loadDashboardData(type) {
         let loaderIndex = layer.load(2, {shade: ['0.3', '#fff']});
-        $.post("/admin/api/dashboard/data", {type: type}, res => {
-            layer.close(loaderIndex);
-            if (res.code == 200) {
-                $('.turnover').text("￥" + res.data.turnover);
-                $('.order_num').text(res.data.order_num);
-                $('.business').text(res.data.business);
-                $('.cash_status_0').text(res.data.cash_status_0);
-                $('.cash_money_status_1').text("￥" + res.data.cash_money_status_1);
-                $('.user_register_num').text(res.data.user_register_num);
-                $('.order_profit').text("￥" + res.data.profit);
-                $('.recharge_amount').text("￥" + res.data.recharge_amount);
-                $('.divide_amount').text("￥" + res.data.divide_amount);
-                $('.rebate').text("￥" + res.data.rebate);
-                $('.cost').text("￥" + res.data.cost);
-                $('.online_amout').text("￥" + res.data.online_amout);
-            }
+        $.ajax({
+            type: 'post',
+            url: '/admin/api/dashboard/data',
+            data: {type: type},
+            dataType: 'json',
+            success: res => {
+                layer.close(loaderIndex);
+                if (res.code == 200) {
+                    $('.turnover').text("￥" + res.data.turnover);
+                    $('.order_num').text(res.data.order_num);
+                    $('.business').text(res.data.business);
+                    $('.cash_status_0').text(res.data.cash_status_0);
+                    $('.cash_money_status_1').text("￥" + res.data.cash_money_status_1);
+                    $('.user_register_num').text(res.data.user_register_num);
+                    $('.order_profit').text("￥" + res.data.profit);
+                    $('.recharge_amount').text("￥" + res.data.recharge_amount);
+                    $('.divide_amount').text("￥" + res.data.divide_amount);
+                    $('.rebate').text("￥" + res.data.rebate);
+                    $('.cost').text("￥" + res.data.cost);
+                    $('.online_amout').text("￥" + res.data.online_amout);
+                }
+            },
+            error: () => layer.close(loaderIndex)
         });
     }
 
     function loadWeekStatistics() {
-        // 加载周统计数据
-        $.get("/admin/api/dashboard/weekStatistics", res => {
+        $.ajax({
+            type: 'get',
+            url: '/admin/api/dashboard/weekStatistics',
+            dataType: 'json',
+            success: res => {
             if (res.code != 200) {
                 layer.msg(res.msg);
                 return;
@@ -154,6 +164,7 @@
             window.addEventListener('resize', function () {
                 statistics.resize();
             });
+            }
         });
     }
 
