@@ -302,10 +302,15 @@
             </fieldset>
             <fieldset class="section">
                 <h3 style="color: pink;font-weight: bold;">请设置管理员邮箱和密码</h3>
-                <input type="text" name="email" placeholder="管理员邮箱">
-                <input type="text" name="nickname" placeholder="呢称">
-                <input type="password" name="login_password" placeholder="登录密码">
-                <input type="password" name="login_re_password" placeholder="确认登录密码">
+                <p id="update-mode-hint" style="display:none;color:#27ae60;font-size:13px;margin-bottom:12px;">
+                    ✅ 升级模式：将保留现有管理员账号，无需重新设置。
+                </p>
+                <div id="admin-fields">
+                    <input type="text" name="email" placeholder="管理员邮箱">
+                    <input type="text" name="nickname" placeholder="呢称">
+                    <input type="password" name="login_password" placeholder="登录密码">
+                    <input type="password" name="login_re_password" placeholder="确认登录密码">
+                </div>
                 <input class="submit prevButton" type="button" value="上一步">
                 <input class="submit button installButton" type="button" value="立即安装">
             </fieldset>
@@ -367,34 +372,46 @@
                     layer.msg("请填写数据库密码");
                     return;
                 }
+
+                // 根据安装模式决定是否显示管理员输入框
+                let isUpdate = $('input[name=install_mode]:checked').val() === 'update';
+                if (isUpdate) {
+                    $('#admin-fields').hide();
+                    $('#update-mode-hint').show();
+                } else {
+                    $('#admin-fields').show();
+                    $('#update-mode-hint').hide();
+                }
+
                 currentSection.removeClass("is-active").next().addClass("is-active");
                 headerSection.removeClass("is-active").next().addClass("is-active");
             }
 
             if (currentSectionIndex == 2) {
+                let isUpdate = $('input[name=install_mode]:checked').val() === 'update';
 
-                if (email == '') {
-                    layer.msg("请设设置管理员邮箱");
-                    return;
-                }
-
-                if (nickname == '') {
-                    layer.msg("呢称不能为空");
-                    return;
-                }
-
-                if (login_password == '') {
-                    layer.msg("请设置登录密码");
-                    return;
-                }
-                if (login_re_password == '') {
-                    layer.msg("请再次输入登录密码");
-                    return;
-                }
-
-                if (login_password != login_re_password) {
-                    layer.msg("两次密码输入不一致");
-                    return;
+                // 仅全新安装时校验管理员字段
+                if (!isUpdate) {
+                    if (email == '') {
+                        layer.msg("请设设置管理员邮箱");
+                        return;
+                    }
+                    if (nickname == '') {
+                        layer.msg("呢称不能为空");
+                        return;
+                    }
+                    if (login_password == '') {
+                        layer.msg("请设置登录密码");
+                        return;
+                    }
+                    if (login_re_password == '') {
+                        layer.msg("请再次输入登录密码");
+                        return;
+                    }
+                    if (login_password != login_re_password) {
+                        layer.msg("两次密码输入不一致");
+                        return;
+                    }
                 }
 
                 let installButton = $('.installButton');

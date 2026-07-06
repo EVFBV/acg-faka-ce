@@ -87,35 +87,41 @@ class Install extends User
         $loginPwd     = $map['login_password'] ?? '';
         $installMode  = $map['install_mode'] ?? 'fresh'; // fresh | update
 
-        if (!Validation::email($email)) {
-            throw new JSONException("管理员邮箱格式不正确");
-        }
-        if (!Validation::password($loginPwd)) {
-            throw new JSONException("您设置的登录密码过于简单");
-        }
-
-        // 全新安装：先清空数据库所有表
+        // 全新安装：必须验证管理员信息
         if ($installMode === 'fresh') {
+            if (!Validation::email($email)) {
+                throw new JSONException("管理员邮箱格式不正确");
+            }
+            if (!Validation::password($loginPwd)) {
+                throw new JSONException("您设置的登录密码过于简单");
+            }
             $this->dropAllTables($host, $database, $username, $password);
         }
 
         $sqlFile = BASE_PATH . '/kernel/Install/Install.sql';
-        $salt = Str::generateRandStr(32);
-        $pw   = Str::generatePassword($loginPwd, $salt);
+        // 统一换行符，避免 Windows \r\n 导致正则失配
+        $sqlSrc  = str_replace("\r\n", "\n", (string)file_get_contents($sqlFile));
 
-        $sqlSrc = (string)file_get_contents($sqlFile);
-        $sqlSrc = str_replace('__MANAGE_EMAIL__',    $email,    $sqlSrc);
-        $sqlSrc = str_replace('__MANAGE_PASSWORD__', $pw,       $sqlSrc);
-        $sqlSrc = str_replace('__MANAGE_SALT__',     $salt,     $sqlSrc);
-        $sqlSrc = str_replace('__MANAGE_NICKNAME__', $nickname, $sqlSrc);
-
-        // 升级模式：将所有 DROP TABLE 语句移除，避免删除现有数据
-        if ($installMode === 'update') {
+        if ($installMode === 'fresh') {
+            // 全新安装：替换管理员占位符
+            $salt = Str::generateRandStr(32);
+            $pw   = Str::generatePassword($loginPwd, $salt);
+            $sqlSrc = str_replace('__MANAGE_EMAIL__',    $email,    $sqlSrc);
+            $sqlSrc = str_replace('__MANAGE_PASSWORD__', $pw,       $sqlSrc);
+            $sqlSrc = str_replace('__MANAGE_SALT__',     $salt,     $sqlSrc);
+            $sqlSrc = str_replace('__MANAGE_NICKNAME__', $nickname, $sqlSrc);
+        } else {
+            // 升级模式：
+            // 1. 移除所有 DROP TABLE 语句（防止清空现有表）
             $sqlSrc = preg_replace('/DROP TABLE IF EXISTS[^\n]+;\n/i', '', $sqlSrc);
-            // 将 CREATE TABLE 改为 CREATE TABLE IF NOT EXISTS
+            // 2. CREATE TABLE → CREATE TABLE IF NOT EXISTS（不覆盖已有表）
             $sqlSrc = preg_replace('/CREATE TABLE\s+`/i', 'CREATE TABLE IF NOT EXISTS `', $sqlSrc);
-            // 将 INSERT INTO 改为 INSERT IGNORE INTO（避免主键冲突）
+            // 3. 移除 manage 表的 INSERT 行（完全保留现有管理员账号，不插入也不覆盖）
+            $sqlSrc = preg_replace('/^INSERT\s+(?:IGNORE\s+)?INTO\s+`?__PREFIX__manage`?[^\n]+\n/im', '', $sqlSrc);
+            // 4. 其余 INSERT 改为 INSERT IGNORE（初始化配置/基础数据不覆盖已有记录）
             $sqlSrc = preg_replace('/^INSERT INTO\s+/im', 'INSERT IGNORE INTO ', $sqlSrc);
+            // 移除管理员占位符（防止含占位符的语句残留导致SQL语法错误）
+            $sqlSrc = str_replace(['__MANAGE_EMAIL__', '__MANAGE_PASSWORD__', '__MANAGE_SALT__', '__MANAGE_NICKNAME__'], ['', '', '', ''], $sqlSrc);
         }
 
         $tmpFile = $sqlFile . ".tmp";
