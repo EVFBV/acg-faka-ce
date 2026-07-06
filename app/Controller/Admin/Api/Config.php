@@ -158,6 +158,7 @@ class Config extends Manage
 
         $config = [
             "type" => $type,
+            "disable_devtools" => isset($post['disable_devtools']) ? 1 : 0,
             "geetest" => [
                 "captcha_id" => trim((string)($post['geetest_captcha_id'] ?? "")),
                 "captcha_key" => trim((string)($post['geetest_captcha_key'] ?? "")),

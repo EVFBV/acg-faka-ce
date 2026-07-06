@@ -28,6 +28,7 @@
     <!--start::HOOK-->
     #{hook(\App\Consts\Hook::USER_VIEW_HEADER)}
     <!--end::HOOK-->
+    #{if $config.disable_devtools == 1}#{js("/assets/user/controller/common/no-devtools.js")}#{/if}
 </head>
 <body style="background: url('#{$config.background_url}') fixed no-repeat;background-size: cover;">
 <div class="net-loading" style="display: none;">

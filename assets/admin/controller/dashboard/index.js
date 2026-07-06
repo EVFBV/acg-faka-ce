@@ -157,7 +157,6 @@
         });
     }
 
-    loadAd();
     loadDashboardData(0);
     loadWeekStatistics();
 

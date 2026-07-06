@@ -27,6 +27,29 @@
                         <!--begin::Card body-->
                         <div class="card-body p-9">
 
+                            <!--begin::DisableDevtools-->
+                            <div class="row mb-6">
+                                <label class="col-lg-4 col-form-label fw-bold fs-6">
+                                    禁用 F12 开发者工具
+                                </label>
+                                <div class="col-lg-8 fv-row d-flex align-items-center">
+                                    <div class="form-check form-switch form-check-custom form-check-solid me-3">
+                                        <input class="form-check-input" type="checkbox" name="disable_devtools"
+                                               value="1" id="disable_devtools"
+                                               #{if $captcha.disable_devtools == 1} checked #{/if}/>
+                                    </div>
+                                    <div class="text-muted fs-7">
+                                        开启后，前台访客将无法使用 <b>F12</b>、<b>Ctrl+Shift+I/J/C</b>、右键菜单等方式打开浏览器开发者工具。
+                                        <br>适合保护前台页面布局、防止普通用户分析接口或修改页面元素。
+                                        <br><span class="text-warning"><i class="fa-duotone fa-regular fa-triangle-exclamation"></i>
+                                        注意：此功能无法阻止专业开发者，仅对普通用户有效。建议同时开启 HTTPS。</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::DisableDevtools-->
+
+                            <div class="separator separator-dashed mb-9"></div>
+
                             <!--begin::Hint-->
                             <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed mb-9 p-6">
                                 <div class="d-flex flex-stack flex-grow-1">
